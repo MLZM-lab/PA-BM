@@ -1,0 +1,9 @@
+FLAGELLA = CheIV
+MucR = MucR
+SadB = c-di-GMP
+WspR =! WspF
+BifA = BifA
+c-di-GMP = ((WspR | MucR) & SadC) &! BifA
+CheIV = SadB
+SadC = SadC
+WspF = WspF
