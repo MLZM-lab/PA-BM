@@ -1,0 +1,3 @@
+Fur = Fur
+PYOCHELIN = THR_PchR[3]
+PchR = Fur
