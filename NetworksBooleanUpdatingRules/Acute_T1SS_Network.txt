@@ -1,0 +1,5 @@
+T1SS = Crc
+CbrB_phospho = CbrA
+asCrcZ = CbrB_phospho
+CbrA = CbrA
+Crc =! asCrcZ
