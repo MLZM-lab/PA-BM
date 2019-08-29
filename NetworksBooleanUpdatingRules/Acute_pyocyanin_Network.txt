@@ -1,0 +1,15 @@
+Fur = Fur
+Pyocyanin = Anthralinate &! THR_MexT[3]
+AmpR = THR_AlgT_U[3]
+MexS = MexT
+MexT = MexS &! THR_AmpR[3]
+AlgT_U =! ClpXP &! MucA &! THR_AmpR[3]
+AlgW = AlgW
+Anthralinate = THR_asPrrF2[3] &! CatBCA
+asPrrF2 =! Fur
+CatBCA = CatBCA
+ClpXP = ClpXP
+MucA =! MucB &! MucP &! AlgW
+MucB = MucB
+MucD = MucD
+MucP = MucD
