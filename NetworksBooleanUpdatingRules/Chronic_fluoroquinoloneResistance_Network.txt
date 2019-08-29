@@ -1,0 +1,12 @@
+FLUOROQUINOLONE_RESISTANCE = MexT | MexEF-OprN
+AmpR = THR_AlgT_U[3]
+MexS = MexT
+MexT = MexS &! THR_AmpR[3]
+AlgT_U =! ClpXP &! MucA &! THR_AmpR[3]
+AlgW = AlgW
+ClpXP = ClpXP
+MexEF-OprN = MexT
+MucA =! MucB &! MucP &! AlgW
+MucB = MucB
+MucD = MucD
+MucP = MucD
