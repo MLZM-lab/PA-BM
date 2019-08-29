@@ -1,0 +1,4 @@
+PYOCIN = PrtN
+PrtN =! PrtR
+PrtR =! RecA
+RecA = RecA
