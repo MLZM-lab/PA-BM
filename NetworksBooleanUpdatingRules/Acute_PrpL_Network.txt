@@ -1,0 +1,3 @@
+Fur = Fur
+PrpL = PvdS
+PvdS =! Fur
