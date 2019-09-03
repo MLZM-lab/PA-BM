@@ -1,5 +1,5 @@
-Fur = Fur
 PYOVERDIN = PvdS | THR_PhoP[3]
+Fur = Fur
 PhoP = CbrA
 CbrA = CbrA
 PvdS =! Fur
