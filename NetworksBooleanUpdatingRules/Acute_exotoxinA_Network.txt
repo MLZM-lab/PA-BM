@@ -1,5 +1,5 @@
-Fur = Fur
 ToxA = PvdS | PtxR | RegA | RsmA
+Fur = Fur
 Anr = Anr
 BfiR =! RsmA
 GacS_phospho =! RetS
