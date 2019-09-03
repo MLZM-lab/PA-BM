@@ -1,4 +1,4 @@
-PYOVERDIN = PvdS | THR_PhoP[3]
+PYOVERDINE = PvdS | THR_PhoP[3]
 Fur = Fur
 PhoP = CbrA
 CbrA = CbrA
