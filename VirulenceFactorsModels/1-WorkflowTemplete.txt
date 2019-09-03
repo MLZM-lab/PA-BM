@@ -1,0 +1,137 @@
+########################################
+#Template code
+########################################
+
+#This is the code ran for all the network txt files
+
+R
+
+library(SPIDDOR)
+library(ggplot2)
+
+
+file <- "Acute_elastase_Network.txt" #Or any of the other virulence factors networks.
+
+BN <- read.Boolean.functions(file)
+
+#First just a simulation to check it out. 
+
+Pattern<-dynamic_evolution.f(BN,time.steps=19,asynchronous=FALSE)
+Pattern
+
+
+P_ON_IN1_S2<-toggplot(Pattern)
+ggplot(data=P_ON_IN1_S2,aes(x=time,y=value), main="P_ELASTASE_allIniCond_S") +
+	geom_line( colour="#336600",size = 1.5) + ylab(" % of activation") +
+	xlab("Time steps") + facet_wrap(~variable) 
+
+
+
+AVG<-Average_simulations.f(BN,time.steps=19,repetitions=100)
+AVG
+
+
+P_ON_IN1_S2<-toggplot(AVG)
+ggplot(data=P_ON_IN1_S2,aes(x=time,y=value), main="AVG_ELASTASE_allIniCond_AS.pdf") +
+	geom_line( colour="#336600",size = 1.5) + ylab(" % of activation") +
+	xlab("Time steps") + facet_wrap(~variable) 
+
+
+#What if all the initial conditions are off?
+
+P_S <-dynamic_evolution.f(BN,time.steps=19,Knockouts=BN$Initial_conditions, asynchronous = FALSE)
+P_S
+
+#Get the attractors 
+
+Attractor_syn<-Get_Attractor.f(BN,asynchronous=FALSE,Percent.ON=FALSE)
+
+Attractor_asyn<-Get_Attractor.f(BN,asynchronous=TRUE,Percent.ON=FALSE, repetitions=100)
+
+
+#Let's see how each single knockout of the initial conditions would affect it
+
+#Get the KO matrix directly.
+
+KO.m <- KO_matrix.f(BN, time.steps=999, repetitions=100, asynchronous=FALSE)
+Create_heatmap(KO.m)
+
+
+KO.m <- KO_matrix.f(BN, time.steps=999, repetitions=100, asynchronous=T)
+Create_heatmap(KO.m)
+
+
+#See which combinations of knockouts of the nodes would lead to less production of elastase
+
+pairwise<- combn(BN$nodes.names, 2)
+RESsyn<- NULL
+rownames<- NULL
+for(i in 1:dim(pairwise)[2]){
+Attractor_syn<-Get_Attractor.f(BN, Knockouts=c(pairwise[1,i], pairwise[2,i]), asynchronous=FALSE,Percent.ON=TRUE)
+rownames<- c(rownames, paste(pairwise[1,i], pairwise[2,i], sep="_"))
+RESsyn<- rbind(RESsyn , Attractor_syn)
+}
+row.names(RESsyn)<- rownames
+RESsyn
+
+
+RESasyn<- NULL
+rownames<- NULL
+for(i in 1:dim(pairwise)[2]){
+Attractor_asyn<-Get_Attractor.f(BN, Knockouts=c(pairwise[1,i], pairwise[2,i]), asynchronous=TRUE,Percent.ON=TRUE, repetitions=100)
+rownames<- c(rownames, paste(pairwise[1,i], pairwise[2,i], sep="_"))
+RESasyn<- rbind(RESasyn , Attractor_asyn)
+}
+row.names(RESasyn)<- rownames
+RESasyn
+
+
+##What about polymorphisms instead of knockouts? Single polymorphisms, reduce each node by 50%
+
+RESasyn<- NULL
+rownames<- NULL
+for(i in 1:length(BN$nodes.names)){
+BN$Polymorphism[BN$nodes.names[i]]<- 0.5
+print(i)
+Attractor_syn<-Get_Attractor.f(BN,asynchronous=TRUE,Percent.ON=TRUE, repetitions=100)
+rownames<- c(rownames, BN$nodes.names[i])
+RESasyn<- rbind(RESasyn , Attractor_syn)
+BN$Polymorphism[BN$nodes.names[i]]<-1
+}
+row.names(RESasyn)<- rownames
+RESasyn
+
+
+#What about polymorphism and knockout?
+
+pdf("KO_Polymorph.m_ELASTASE_AS.pdf")
+for(i in 1:length(BN$nodes.names)){
+BN$Polymorphism[BN$nodes.names[i]]<- 0.5
+print(i)
+KO.m <- KO_matrix.f(BN, time.steps=999, repetitions=100, asynchronous=T)
+Create_heatmap(KO.m)
+BN$Polymorphism[BN$nodes.names[i]]<-1
+}
+dev.off()
+
+
+#Get all the attractors, all the diff combinations of the initial conditions
+
+BN2<- BN
+RESasyn<- NULL
+rownames<- NULL
+for(i in 1:length(BN2$Initial_conditions)-1 ){
+combinations<- combn(BN2$Initial_conditions, i )
+for(k in 1:dim(combinations)[2]){
+	INsON= paste(combinations[,k], sep="")
+	KnockOuts=BN$Initial_conditions[-(which(BN$Initial_conditions%in%INsON))]
+	Attractor_asyn<-Get_Attractor.f(BN, Knockouts=KnockOuts, asynchronous=TRUE,Percent.ON=TRUE, repetitions=100) #So, in here the row names are the INs that are ON, the rest are knocked out
+	rownames<- c(rownames, paste(combinations[,k],  collapse="_"))
+	RESasyn<- rbind(RESasyn , Attractor_asyn)
+	}
+}
+rownames[1]<- "All_ON"
+row.names(RESasyn)<- rownames
+table(RESasyn[,1])
+
+
