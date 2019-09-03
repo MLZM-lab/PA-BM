@@ -1,5 +1,5 @@
-ALGINATE = (Alg44 | AlgD | AlgC) &! (AlgZ_FimS | THR_PhoP[3])
 BIOFILM = ((ALGINATE & Pel & Psl) | (Pel & Psl) | (MifR & BfmR & BfiR) | (cupB & cupC & cupA & MorA ) | (BfiS_phospho & PA3347_phospho & MOD_PhoP[3] & Crc & Pel)) &! AmpR &! Fur &! MOD_FLAGELLA[3] &! MOD_SWARMING[3]
+ALGINATE = (Alg44 | AlgD | AlgC) &! (AlgZ_FimS | THR_PhoP[3])
 FLAGELLA = CheIV
 Fur = Fur
 SWARMING = THR_PA3347_phospho[3]
