@@ -1,1 +1,621 @@
 
+#########################################################
+##############Activation pattern analyses################
+#########################################################
+
+R
+
+library(SPIDDOR)
+library(ggplot2)
+
+BN <- read.Boolean.functions("QS_Network.txt")
+print(BN)
+
+
+##################
+#Las system
+##################
+
+######## IN1
+
+#From the Las system. See how much Las AI is needed for a sustained activation of the Las system
+
+for (i in 3:10){
+P_ON_IN1_S <-dynamic_evolution.f(BN,time.steps=19,Knockouts=c("AI1", "IN2", "IN3","IN4","IN5","IN6","IN7","IN8"), 
+	KO_times=list(seq(i,20),seq(1,20),seq(1,20),seq(1,20),seq(1,20),seq(1,20),seq(1,20),seq(1,20) ), 
+	asynchronous = FALSE) #all the initial conditions are OFF (knocked-out), except the IN1 which is for Las AI in the environment
+P_ON_IN1_S2<-toggplot(P_ON_IN1_S)
+ggplot(data=P_ON_IN1_S2,aes(x=time,y=value)) +
+	geom_line( colour="#336600",size = 1.5) + ylab(" % of activation") +
+	xlab("Time steps") + facet_wrap(~variable) 
+}
+
+
+#Now, let's see if the system can elecit a sustanied reaction with the lasREG being able to be active for less time.
+
+BN$Modulator["MOD_lasR_bound"]<- 2
+
+for (i in 3:10){
+P_ON_IN1_S <-dynamic_evolution.f(BN,time.steps=19,Knockouts=c("AI1", "IN2", "IN3","IN4","IN5","IN6","IN7","IN8"), 
+	KO_times=list(seq(i,20),seq(1,20),seq(1,20),seq(1,20),seq(1,20),seq(1,20),seq(1,20),seq(1,20) ), 
+	asynchronous = FALSE) 
+P_ON_IN1_S2<-toggplot(P_ON_IN1_S)
+ggplot(data=P_ON_IN1_S2,aes(x=time,y=value)) +
+	geom_line( colour="#336600",size = 1.5) + ylab(" % of activation") +
+	xlab("Time steps") + facet_wrap(~variable) 
+}
+
+
+## Now let's see how it goes with the asynchronous.
+
+for (i in 3:10){
+AVG_ON_IN1_AS<-Average_simulations.f(BN,time.steps=19,Knockouts=c("AI1", "IN2", "IN3","IN4","IN5","IN6","IN7","IN8"), 
+	KO_times=list( seq(i,20),seq(1,20),seq(1,20),seq(1,20),seq(1,20),seq(1,20),seq(1,20),seq(1,20) ), 
+	repetitions=100)
+AVG_ON_IN1_AS2<-toggplot(AVG_ON_IN1_AS)
+ggplot(data=AVG_ON_IN1_AS2,aes(x=time,y=value), main="AI 2 steps") +
+	geom_line( colour="#336600",size = 1.5) + ylab(" % of activation") +
+	xlab("Time steps") + facet_wrap(~variable)
+}
+
+#What if here I also use the MOD[2]?
+
+BN$Modulator["MOD_lasR_bound"]<- 2
+
+for (i in 3:10){
+AVG_ON_IN1_AS<-Average_simulations.f(BN,time.steps=19,Knockouts=c("AI1", "IN2", "IN3","IN4","IN5","IN6","IN7","IN8"), 
+	KO_times=list( seq(i,20),seq(1,20),seq(1,20),seq(1,20),seq(1,20),seq(1,20),seq(1,20),seq(1,20) ), 
+	repetitions=100)
+AVG_ON_IN1_AS2<-toggplot(AVG_ON_IN1_AS)
+ggplot(data=AVG_ON_IN1_AS2,aes(x=time,y=value), main="AI 2 steps") +
+	geom_line( colour="#336600",size = 1.5) + ylab(" % of activation") +
+	xlab("Time steps") + facet_wrap(~variable)
+}
+
+
+#What if we reduce it to be able to excert modulation for 1 step?
+
+BN$Modulator["MOD_lasR_bound"]<- 1
+
+for (i in 3:10){
+AVG_ON_IN1_AS<-Average_simulations.f(BN,time.steps=19,Knockouts=c("AI1", "IN2", "IN3","IN4","IN5","IN6","IN7","IN8"), 
+	KO_times=list( seq(i,20),seq(1,20),seq(1,20),seq(1,20),seq(1,20),seq(1,20),seq(1,20),seq(1,20) ), 
+	repetitions=100)
+AVG_ON_IN1_AS2<-toggplot(AVG_ON_IN1_AS)
+ggplot(data=AVG_ON_IN1_AS2,aes(x=time,y=value), main="AI 2 steps") +
+	geom_line( colour="#336600",size = 1.5) + ylab(" % of activation") +
+	xlab("Time steps") + facet_wrap(~variable)
+}
+
+
+
+###### IN2
+
+#Ok, now only IN2 ON from the Las system (the one turning rsaL ON).
+
+BN <- read.Boolean.functions("QS_Network.txt")
+
+P_ON_IN2_S <-dynamic_evolution.f(BN,time.steps=19,Knockouts=c("IN1", "IN3","IN4","IN5","IN6","IN7","IN8"), 
+	KO_times=list(seq(1,20),seq(1,20),seq(1,20),seq(1,20),seq(1,20),seq(1,20),seq(1,20) ),
+	asynchronous = FALSE) #turning all the initial conditions OFF
+P_ON_IN2_S2<-toggplot(P_ON_IN2_S)
+ggplot(data=P_ON_IN2_S2,aes(x=time,y=value)) +
+	geom_line( colour="#336600",size = 1.5) + ylab(" % of activation") +
+	xlab("Time steps") + facet_wrap(~variable)
+
+AVG_ON_IN2_AS<-Average_simulations.f(BN,time.steps=19,Knockouts=c("IN1", "IN3","IN4","IN5","IN6","IN7","IN8"), 
+	KO_times=list(seq(1,20),seq(1,20),seq(1,20),seq(1,20),seq(1,20),seq(1,20),seq(1,20) ), 
+	repetitions=100)
+AVG_ON_IN2_AS2<-toggplot(AVG_ON_IN2_AS)
+ggplot(data=AVG_ON_IN2_AS2,aes(x=time,y=value)) +
+	geom_line( colour="#336600",size = 1.5) + ylab(" % of activation") +
+	xlab("Time steps") + facet_wrap(~variable)
+
+
+##### IN1 AND IN2
+
+#To see how the signals compete to regulate the Las network (and thus the other ones)
+
+BN <- read.Boolean.functions("QS_Network.txt")
+
+#Let's see what happens if there's more AI in the environment, more than only 6 steps
+
+for(i in 7:12){
+P_ON_IN1_IN2_S <-dynamic_evolution.f(BN,time.steps=19,Knockouts=c("AI1", "IN3","IN4","IN5","IN6","IN7","IN8"), 
+	KO_times=list( seq(i,20),seq(1,20),seq(1,20),seq(1,20),seq(1,20),seq(1,20),seq(1,20) ), 
+	asynchronous = FALSE) 
+P_ON_IN1_IN2_S2<-toggplot(P_ON_IN1_IN2_S)
+ggplot(data=P_ON_IN1_IN2_S2,aes(x=time,y=value), main="AI 7 steps") +
+	geom_line( colour="#336600",size = 1.5) + ylab(" % of activation") +
+	xlab("Time steps") + facet_wrap(~variable)
+}
+
+
+#Now let's see in the asynchronous mode
+
+for(i in 7:12){
+AVG_ON_IN1_IN2_AS<-Average_simulations.f(BN,time.steps=19,Knockouts=c("AI1", "IN3","IN4","IN5","IN6","IN7","IN8"), 
+	KO_times=list( seq(7,20),seq(1,20),seq(1,20),seq(1,20),seq(1,20),seq(1,20),seq(1,20) ), 
+	repetitions=100)
+AVG_ON_IN1_IN2_AS2<-toggplot(AVG_ON_IN1_IN2_AS)
+ggplot(data=AVG_ON_IN1_IN2_AS2,aes(x=time,y=value)) +
+	geom_line( colour="#336600",size = 1.5) + ylab(" % of activation") +
+	xlab("Time steps") + facet_wrap(~variable)
+}
+
+
+
+################
+#PQS system
+################
+
+#Let's see the efect of delaying the repression upon the PQS system
+
+###IN1
+
+for(i in 3:16){
+print(i)
+BN$Arguments["RhlR_boundmax_pqsR"]<- i
+BN$Arguments["RhlR_boundmax_pqsABCDH"]<- i
+
+P_ON_IN1_S <-dynamic_evolution.f(BN,time.steps=19,Knockouts=c("AI1", "IN2", "IN3","IN4","IN5","IN6","IN7","IN8"), 
+	KO_times=list( seq(7,20),seq(1,20),seq(1,20),seq(1,20),seq(1,20),seq(1,20),seq(1,20),seq(1,20) ), 
+	asynchronous = FALSE)
+print(P_ON_IN1_S["pqsREG",])
+
+AVG_ON_IN1_AS<-Average_simulations.f(BN,time.steps=19,Knockouts=c("AI1", "IN2", "IN3","IN4","IN5","IN6","IN7","IN8"), 
+	KO_times=list( seq(7,20),seq(1,20),seq(1,20),seq(1,20),seq(1,20),seq(1,20),seq(1,20),seq(1,20) ), 
+	repetitions=100)
+print(AVG_ON_IN1_AS["pqsREG",])
+}
+
+BN$Arguments["RhlR_boundmax_pqsR"]<- 3 #Turn it back to the default
+BN$Arguments["RhlR_boundmax_pqsABCDH"]<- 3 #Turn it back to the default
+
+
+#Now we examine the timing of rhlR
+
+for(i in 3:16){
+print(i)
+BN$Arguments["LasR_boundmax_rhlR"]<- i
+
+P_ON_IN1_S <-dynamic_evolution.f(BN,time.steps=19,Knockouts=c("AI1", "IN2", "IN3","IN4","IN5","IN6","IN7","IN8"), 
+	KO_times=list( seq(7,20),seq(1,20),seq(1,20),seq(1,20),seq(1,20),seq(1,20),seq(1,20),seq(1,20) ), 
+	asynchronous = FALSE) 
+print(P_ON_IN1_S["pqsREG",])
+
+AVG_ON_IN1_AS<-Average_simulations.f(BN,time.steps=19,Knockouts=c("AI1", "IN2", "IN3","IN4","IN5","IN6","IN7","IN8"), 
+	KO_times=list( seq(7,20),seq(1,20),seq(1,20),seq(1,20),seq(1,20),seq(1,20),seq(1,20),seq(1,20) ), 
+	repetitions=100)
+print(AVG_ON_IN1_AS["pqsREG",])
+}
+
+
+
+##### IN1 & IN4
+
+#How much PQS do I need to overcome the negative regulation of rhlr?
+
+BN <- read.Boolean.functions("QS_Network.txt")
+
+for(i in 3:10){
+P_ON_IN1_IN4_S <-dynamic_evolution.f(BN,time.steps=19,Knockouts=c("AI1", "IN2", "IN3","AI4","IN5","IN6","IN7","IN8"), 
+	KO_times=list( seq(7,20),seq(1,20),seq(1,20),seq(i,20),seq(1,20),seq(1,20),seq(1,20),seq(1,20) ), 
+	asynchronous = FALSE) 
+P_ON_IN1_IN4_S2<-toggplot(P_ON_IN1_IN4_S)
+ggplot(data=P_ON_IN1_IN4_S2,aes(x=time,y=value)) +
+	geom_line( colour="#336600",size = 1.5) + ylab(" % of activation") +
+	xlab("Time steps") + facet_wrap(~variable)
+}
+
+#Now, test the same but with the asynchronous mode
+
+for(i in 3:10){
+AVG_ON_IN1_IN4_AS<-Average_simulations.f(BN,time.steps=19,Knockouts=c("AI1", "IN2", "IN3","AI4","IN5","IN6","IN7","IN8"), 
+	KO_times=list( seq(7,20),seq(1,20),seq(1,20),seq(i,20),seq(1,20),seq(1,20),seq(1,20),seq(1,20) ), 
+	repetitions=100)
+AVG_ON_IN1_IN4_AS2<-toggplot(AVG_ON_IN1_IN4_AS)
+ggplot(data=AVG_ON_IN1_IN4_AS2,aes(x=time,y=value)) +
+	geom_line( colour="#336600",size = 1.5) + ylab(" % of activation") +
+	xlab("Time steps") + facet_wrap(~variable)
+}
+
+
+
+##### IN4
+
+#When there is only PQS AI in the environment:
+
+BN <- read.Boolean.functions("QS_Network.txt")
+
+for(i in 3:10){
+P_ON_IN4_S <-dynamic_evolution.f(BN,time.steps=19,Knockouts=c("IN1", "IN2", "IN3","AI4","IN5","IN6","IN7","IN8"), 
+	KO_times=list( seq(1,20),seq(1,20),seq(1,20),seq(i,20),seq(1,20),seq(1,20),seq(1,20),seq(1,20) ), 
+	asynchronous = FALSE)
+P_ON_IN4_S2<-toggplot(P_ON_IN4_S)
+ggplot(data=P_ON_IN4_S2,aes(x=time,y=value)) +
+	geom_line( colour="#336600",size = 1.5) + ylab(" % of activation") +
+	xlab("Time steps") + facet_wrap(~variable)
+}
+
+
+#Now in the asynchronous mode
+
+for(i in 3:10){
+AVG_ON_IN4_AS<-Average_simulations.f(BN,time.steps=19,Knockouts=c("IN1", "IN2", "IN3","AI4","IN5","IN6","IN7","IN8"), 
+	KO_times=list( seq(1,20),seq(1,20),seq(1,20),seq(i,20),seq(1,20),seq(1,20),seq(1,20),seq(1,20) ), 
+	repetitions=100)
+AVG_ON_IN4_AS2<-toggplot(AVG_ON_IN4_AS)
+ggplot(data=AVG_ON_IN4_AS2,aes(x=time,y=value)) +
+	geom_line( colour="#336600",size = 1.5) + ylab(" % of activation") +
+	xlab("Time steps") + facet_wrap(~variable)
+}
+
+
+
+#####IN4 IN1 IN8
+
+##PQSREG can also be activated through the IQS system (IN7 and IN8 inputs). Also examine its effect upon the PQS system
+
+
+BN <- read.Boolean.functions("QS_Network.txt")
+print(BN)
+
+for(i in 3:10){
+P_ON_IN1_IN4_IN8_S <-dynamic_evolution.f(BN,time.steps=19,Knockouts=c("AI1", "IN2", "IN3","AI4","IN5","IN6","IN7","AI8"), 
+	KO_times=list(seq(7,20),seq(1,20),seq(1,20),seq(7,20),seq(1,20),seq(1,20),seq(1,20),seq(i,20) ), 
+	asynchronous = FALSE)
+P_ON_IN1_IN4_IN8_S2<-toggplot(P_ON_IN1_IN4_IN8_S)
+ggplot(data=P_ON_IN1_IN4_IN8_S2,aes(x=time,y=value)) +
+	geom_line( colour="#336600",size = 1.5) + ylab(" % of activation") +
+	xlab("Time steps") + facet_wrap(~variable) 
+}
+
+
+#Now in the asynchronous
+
+for(i in 3:10){
+AVG_ON_IN1_IN4_IN8_AS<-Average_simulations.f(BN,time.steps=19,Knockouts=c("AI1", "IN2", "IN3","AI4","IN5","IN6","IN7","AI8"), 
+	KO_times=list(seq(7,20),seq(1,20),seq(1,20),seq(7,20),seq(1,20),seq(1,20),seq(1,20),seq(i,20) ), 
+	repetitions=100)
+AVG_ON_IN1_IN4_IN8_AS2<-toggplot(AVG_ON_IN1_IN4_IN8_AS)
+ggplot(data=AVG_ON_IN1_IN4_IN8_AS2,aes(x=time,y=value)) +
+	geom_line( colour="#336600",size = 1.5) + ylab(" % of activation") +
+	xlab("Time steps") + facet_wrap(~variable)
+}
+
+
+#####IN1 IN8
+
+BN <- read.Boolean.functions("QS_Network.txt")
+
+for(i in 3:10){
+P_ON_IN1_IN8_S <-dynamic_evolution.f(BN,time.steps=19,Knockouts=c("AI1", "IN2", "IN3","IN4","IN5","IN6","IN7","AI8"), 
+	KO_times=list(seq(7,20),seq(1,20),seq(1,20),seq(1,20),seq(1,20),seq(1,20),seq(1,20),seq(i,20) ), 
+	asynchronous = FALSE)
+P_ON_IN1_IN8_S2<-toggplot(P_ON_IN1_IN8_S)
+ggplot(data=P_ON_IN1_IN8_S2,aes(x=time,y=value)) +
+	geom_line( colour="#336600",size = 1.5) + ylab(" % of activation") +
+	xlab("Time steps") + facet_wrap(~variable) 
+}
+
+
+#####IN1 IN5 IN8
+
+
+P_ON_IN1_IN5_IN8_S <-dynamic_evolution.f(BN,time.steps=19,Knockouts=c("AI1", "IN2", "IN3","IN4","AI5","IN6","IN7","AI8"), 
+	KO_times=list(seq(7,20),seq(1,20),seq(1,20),seq(1,20),seq(7,20),seq(1,20),seq(1,20),seq(7,20) ), 
+	asynchronous = FALSE) 
+P_ON_IN1_IN5_IN8_S2<-toggplot(P_ON_IN1_IN5_IN8_S)
+ggplot(data=P_ON_IN1_IN5_IN8_S2,aes(x=time,y=value)) +
+	geom_line( colour="#336600",size = 1.5) + ylab(" % of activation") +
+	xlab("Time steps") + facet_wrap(~variable) 
+
+
+AVG_ON_IN1_IN5_IN8_AS <-Average_simulations.f(BN,time.steps=19,Knockouts=c("AI1", "IN2", "IN3","IN4","AI5","IN6","IN7","AI8"), 
+	KO_times=list(seq(7,20),seq(1,20),seq(1,20),seq(1,20),seq(7,20),seq(1,20),seq(1,20),seq(7,20) ), 
+	repetitions=100)
+AVG_ON_IN1_IN5_IN8_AS2<-toggplot(AVG_ON_IN1_IN5_IN8_AS)
+ggplot(data=AVG_ON_IN1_IN5_IN8_AS2,aes(x=time,y=value)) +
+	geom_line( colour="#336600",size = 1.5) + ylab(" % of activation") +
+	xlab("Time steps") + facet_wrap(~variable) 
+
+
+
+#####IN1 IN4 IN5 IN8 
+
+
+P_ON_IN1_IN4_IN5_IN8_S <-dynamic_evolution.f(BN,time.steps=19,Knockouts=c("AI1", "IN2", "IN3","AI4","AI5","IN6","IN7","AI8"), 
+	KO_times=list(seq(7,20),seq(1,20),seq(1,20),seq(7,20),seq(7,20),seq(1,20),seq(1,20),seq(7,20) ), 
+	asynchronous = FALSE) 
+P_ON_IN1_IN4_IN5_IN8_S2<-toggplot(P_ON_IN1_IN4_IN5_IN8_S)
+ggplot(data=P_ON_IN1_IN4_IN5_IN8_S2,aes(x=time,y=value)) +
+	geom_line( colour="#336600",size = 1.5) + ylab(" % of activation") +
+	xlab("Time steps") + facet_wrap(~variable) 
+
+
+AVG_ON_IN1_IN4_IN5_IN8_AS <-Average_simulations.f(BN,time.steps=19,Knockouts=c("AI1", "IN2", "IN3","AI4","AI5","IN6","IN7","AI8"), 
+	KO_times=list(seq(7,20),seq(1,20),seq(1,20),seq(7,20),seq(7,20),seq(1,20),seq(1,20),seq(7,20) ), 
+	repetitions=2500)
+AVG_ON_IN1_IN4_IN5_IN8_AS2<-toggplot(AVG_ON_IN1_IN4_IN5_IN8_AS)
+ggplot(data=AVG_ON_IN1_IN4_IN5_IN8_AS2,aes(x=time,y=value), main="IN1_IN4_IN5_IN8") +
+	geom_line( colour="#336600",size = 1.5) + ylab(" % of activation") +
+	xlab("Time steps") + facet_wrap(~variable) 
+
+
+
+
+#################
+#Rhl system
+#################
+
+#####IN5
+
+BN <- read.Boolean.functions("QS_Network.txt")
+print(BN)
+
+for(i in 3:8){
+P_ON_IN5_S <-dynamic_evolution.f(BN,time.steps=19,Knockouts=c("IN1", "IN2", "IN3","IN4","AI5","IN6","IN7","IN8"), 
+	KO_times=list( seq(1,20),seq(1,20),seq(1,20),seq(1,20),seq(i,20),seq(1,20),seq(1,20),seq(1,20) ), 
+	asynchronous = FALSE) 
+P_ON_IN5_S2<-toggplot(P_ON_IN5_S)
+ggplot(data=P_ON_IN5_S2,aes(x=time,y=value), main="bhl 3 times") +
+	geom_line( colour="#336600",size = 1.5) + ylab(" % of activation") +
+	xlab("Time steps") + facet_wrap(~variable)
+}
+
+
+#Now in the asynchronous mode
+
+for(i in 3:8){
+AVG_ON_IN5_AS<-Average_simulations.f(BN,time.steps=19,Knockouts=c("IN1", "IN2", "IN3","IN4","AI5","IN6","IN7","IN8"), 
+	KO_times=list( seq(1,20),seq(1,20),seq(1,20),seq(1,20),seq(i,20),seq(1,20),seq(1,20),seq(1,20) ), 
+	repetitions=100)
+AVG_ON_IN5_AS2<-toggplot(AVG_ON_IN5_AS)
+ggplot(data=AVG_ON_IN5_AS2,aes(x=time,y=value)) +
+	geom_line( colour="#336600",size = 1.5) + ylab(" % of activation") +
+	xlab("Time steps") + facet_wrap(~variable)
+}
+
+
+
+#####################
+#IQS system
+#####################
+
+####IN7
+
+
+BN <- read.Boolean.functions("QS_Network.txt")
+
+P_ON_IN7_S <-dynamic_evolution.f(BN,time.steps=19,Knockouts=c("IN1", "IN2", "IN3","IN4","IN5","IN6","IN8"), 
+	KO_times=list( seq(1,20),seq(1,20),seq(1,20),seq(1,20),seq(1,20),seq(1,20),seq(1,20) ), 
+	asynchronous = FALSE) 
+P_ON_IN7_S2<-toggplot(P_ON_IN7_S)
+ggplot(data=P_ON_IN7_S2,aes(x=time,y=value)) +
+	geom_line( colour="#336600",size = 1.5) + ylab(" % of activation") +
+	xlab("Time steps") + facet_wrap(~variable)
+
+
+#Now in the asynchronous
+
+AVG_ON_IN7_AS <-Average_simulations.f(BN,time.steps=19,Knockouts=c("IN1", "IN2", "IN3","IN4","IN5","IN6","IN8"), 
+	KO_times=list( seq(1,20),seq(1,20),seq(1,20),seq(1,20),seq(1,20),seq(1,20),seq(1,20) ), 
+	repetitions=100)
+AVG_ON_IN7_AS2<-toggplot(AVG_ON_IN7_AS)
+ggplot(data=AVG_ON_IN7_AS2,aes(x=time,y=value)) +
+	geom_line( colour="#336600",size = 1.5) + ylab(" % of activation") +
+	xlab("Time steps") + facet_wrap(~variable)
+
+
+#Evaluate the effect of the timing in the interactions involving the IQS system
+
+for(i in 1:2){
+BN$Arguments[c("iqsRec_boundmax_pqsABCDH", "iqsRec_boundmax_phnAB", "iqsRec_boundmax_rhlI")]<- i
+P_ON_IN7_S <-dynamic_evolution.f(BN,time.steps=19,Knockouts=c("IN1", "IN2", "IN3","IN4","IN5","IN6","IN8"), 
+	KO_times=list( seq(1,20),seq(1,20),seq(1,20),seq(1,20),seq(1,20),seq(1,20),seq(1,20) ), 
+	asynchronous = FALSE) 
+P_ON_IN7_S2<-toggplot(P_ON_IN7_S)
+ggplot(data=P_ON_IN7_S2,aes(x=time,y=value)) +
+	geom_line( colour="#336600",size = 1.5) + ylab(" % of activation") +
+	xlab("Time steps") + facet_wrap(~variable)
+}
+
+
+for(i in 1:2){
+BN$Arguments[c("iqsRec_boundmax_pqsABCDH", "iqsRec_boundmax_phnAB", "iqsRec_boundmax_rhlI")]<- i
+AVG_ON_IN7_AS <-Average_simulations.f(BN,time.steps=19,Knockouts=c("IN1", "IN2", "IN3","IN4","IN5","IN6","IN8"), 
+	KO_times=list( seq(1,20),seq(1,20),seq(1,20),seq(1,20),seq(1,20),seq(1,20),seq(1,20) ), 
+	repetitions=100)
+AVG_ON_IN7_AS2<-toggplot(AVG_ON_IN7_AS)
+ggplot(data=AVG_ON_IN7_AS2,aes(x=time,y=value)) +
+	geom_line( colour="#336600",size = 1.5) + ylab(" % of activation") +
+	xlab("Time steps") + facet_wrap(~variable)
+}
+
+
+
+
+
+############################################################
+####################Perturbation analyses###################
+############################################################
+
+R
+
+library(SPIDDOR)
+library(ggplot2)
+
+##################
+#Las system
+##################
+
+######## IN1
+
+BN <- read.Boolean.functions("QS_Network_IN1_ON.txt")
+
+KO.m <- KO_matrix.f(BN, time.steps=999, repetitions=100, asynchronous=FALSE)
+pdf("KO.m_las_IN1on_S.pdf")
+Create_heatmap(KO.m)
+dev.off()
+
+KO.m <- KO_matrix.f(BN, time.steps=999, repetitions=100, asynchronous=T)
+pdf("KO.m_las_IN1on_AS.pdf")
+Create_heatmap(KO.m)
+dev.off()
+
+
+######## IN1 AND IN2
+
+BN <- read.Boolean.functions("QS_Network_IN1_IN2_ON.txt")
+
+KO.m <- KO_matrix.f(BN, time.steps=999, repetitions=100, asynchronous=FALSE)
+pdf("KO.m_las_IN1_IN2on_S.pdf")
+Create_heatmap(KO.m)
+dev.off()
+
+KO.m <- KO_matrix.f(BN, time.steps=999, repetitions=100, asynchronous=T)
+pdf("KO.m_las_IN1_IN2on_AS.pdf")
+Create_heatmap(KO.m)
+dev.off()
+
+
+
+################
+#PQS system
+################
+
+##### IN1 & IN4
+
+BN <- read.Boolean.functions("QS_Network_IN1_IN4_ON.txt")
+
+KO.m <- KO_matrix.f(BN, time.steps=999, repetitions=100, asynchronous=FALSE)
+pdf("KO.m_pqs_IN1_IN4on_S.pdf")
+Create_heatmap(KO.m)
+dev.off()
+
+KO.m <- KO_matrix.f(BN, time.steps=999, repetitions=100, asynchronous=T)
+pdf("KO.m_pqs_IN1_IN4on_AS.pdf")
+Create_heatmap(KO.m)
+dev.off()
+
+
+##### IN4
+
+BN <- read.Boolean.functions("QS_Network_IN4_ON.txt")
+
+KO.m <- KO_matrix.f(BN, time.steps=999, repetitions=100, asynchronous=FALSE)
+pdf("KO.m_pqs_IN4on_S.pdf")
+Create_heatmap(KO.m)
+dev.off()
+
+KO.m <- KO_matrix.f(BN, time.steps=999, repetitions=100, asynchronous=T)
+pdf("KO.m_pqs_IN4on_AS.pdf")
+Create_heatmap(KO.m)
+dev.off()
+
+
+#####IN1 IN4 IN8
+
+BN <- read.Boolean.functions("QS_Network_IN1_IN4_IN8_ON.txt")
+
+KO.m <- KO_matrix.f(BN, time.steps=999, repetitions=100, asynchronous=FALSE)
+pdf("KO.m_pqs_IN1_IN4_IN8on_S.pdf")
+Create_heatmap(KO.m)
+dev.off()
+
+
+KO.m <- KO_matrix.f(BN, time.steps=999, repetitions=100, asynchronous=T)
+pdf("KO.m_pqs_IN1_IN4_IN8on_AS.pdf")
+Create_heatmap(KO.m)
+dev.off()
+
+
+#####IN1 IN8
+
+BN <- read.Boolean.functions("QS_Network_IN1_IN8_ON.txt")
+
+KO.m <- KO_matrix.f(BN, time.steps=999, repetitions=100, asynchronous=FALSE)
+pdf("KO.m_pqs_IN1_IN8on_S.pdf")
+Create_heatmap(KO.m)
+dev.off()
+
+
+KO.m <- KO_matrix.f(BN, time.steps=999, repetitions=100, asynchronous=T)
+pdf("KO.m_pqs_IN1_IN8on_AS.pdf")
+Create_heatmap(KO.m)
+dev.off()
+
+
+#####IN1 IN5 IN8
+
+BN <- read.Boolean.functions("QS_Network_IN1_IN5_IN8_ON.txt")
+
+KO.m <- KO_matrix.f(BN, time.steps=999, repetitions=100, asynchronous=FALSE)
+pdf("KO.m_pqs_IN1_IN5_IN8on_S.pdf")
+Create_heatmap(KO.m)
+dev.off()
+
+
+KO.m <- KO_matrix.f(BN, time.steps=999, repetitions=100, asynchronous=T)
+pdf("KO.m_pqs_IN1_IN5_IN8on_AS.pdf")
+Create_heatmap(KO.m)
+dev.off()
+
+
+#####IN1 IN4 IN5 IN8 
+
+BN <- read.Boolean.functions("QS_Network_IN1_IN4_IN5_IN8_ON.txt")
+
+KO.m <- KO_matrix.f(BN, time.steps=999, repetitions=100, asynchronous=FALSE)
+pdf("KO.m_pqs_IN1_IN4_IN5_IN8on_S.pdf")
+Create_heatmap(KO.m)
+dev.off()
+
+
+KO.m <- KO_matrix.f(BN, time.steps=999, repetitions=100, asynchronous=T)
+pdf("KO.m_pqs_IN1_IN4_IN5_IN8on_AS.pdf")
+Create_heatmap(KO.m)
+dev.off()
+
+
+
+#################
+#Rhl system
+#################
+
+#####IN5
+
+BN <- read.Boolean.functions("QS_Network_IN5_ON.txt")
+
+KO.m <- KO_matrix.f(BN, time.steps=999, repetitions=100, asynchronous=FALSE)
+pdf("KO.m_rhl_IN5on_S.pdf")
+Create_heatmap(KO.m)
+dev.off()
+
+KO.m <- KO_matrix.f(BN, time.steps=999, repetitions=100, asynchronous=T)
+pdf("KO.m_rhl_IN5on_AS.pdf")
+Create_heatmap(KO.m)
+dev.off()
+
+
+
+#####################
+#IQS system
+#####################
+
+####IN7
+
+BN <- read.Boolean.functions("QS_Network_IN7_ON.txt")
+
+KO.m <- KO_matrix.f(BN, time.steps=999, repetitions=100, asynchronous=FALSE)
+pdf("KO.m_iqs_IN7on_S.pdf")
+Create_heatmap(KO.m)
+dev.off()
+
+KO.m <- KO_matrix.f(BN, time.steps=999, repetitions=100, asynchronous=T)
+pdf("KO.m_iqs_IN7on_AS.pdf")
+Create_heatmap(KO.m)
+dev.off()
+
+
