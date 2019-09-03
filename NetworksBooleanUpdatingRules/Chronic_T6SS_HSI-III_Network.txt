@@ -1,5 +1,5 @@
-Fur = Fur
 T6SS_HSI-III = (MvfR | LasRI) &! Sfa3
+Fur = Fur
 AmpR = THR_AlgT_U[3]
 Anr = Anr
 BfiR =! RsmA
