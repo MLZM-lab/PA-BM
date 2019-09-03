@@ -1,0 +1,315 @@
+########################################
+#Specifications for each network
+########################################
+
+Some networks had some extra analyses done, or had some nodes added as initial conditions besides the ones coded in the updating rules. 
+Such specifications are described in this file.  
+
+############################################################## Acute virulence networks
+
+##############
+#ELASTASE
+##############
+
+# MexS should also be considered an initial condition. Add it after the read.Boolean.functions function, before proceeding to running the template code above. 
+
+BN$Initial_conditions<- c(BN$Initial_conditions, "MexS")
+
+
+
+##############
+#PYOCIN
+##############
+
+#Although the attractors are for Pyocin to be ON, PA can easily modulate how much pyocin is made just by modifying how much of the nodes of the network are made.
+
+#The code from the template uses 50% on the analyses tha reduce the activity of a node. Here I'llalso run with other %’s of polymorphism and the node RecA KOed
+#The rows are the activity-reduced nodes, the columns are the nodes affected
+
+for(p in seq(0.1, 1, 0.1)){
+RESasyn<- NULL
+rownames<- NULL
+for(i in 1:length(BN$nodes.names)){
+BN$Polymorphism[BN$nodes.names[i]]<- p
+print(i)
+Attractor_asyn<-Get_Attractor.f(BN,asynchronous=TRUE, Knockouts="RecA" , Percent.ON=TRUE, repetitions=2500)
+rownames<- c(rownames, BN$nodes.names[i])
+RESasyn<- rbind(RESasyn , Attractor_asyn)
+BN$Polymorphism[BN$nodes.names[i]]<-1
+}
+row.names(RESasyn)<- rownames
+print(RESasyn)
+}
+
+
+
+##############
+#Pyocyanin
+##############
+
+#MexS should also be an initial condition
+
+BN$Initial_conditions <- c(BN$Initial_conditions, "MexS")
+
+
+#Also try trio combinations of knockouts
+
+pairwise<- combn(BN$nodes.names, 3)
+
+RESsyn<- NULL
+rownames<- NULL
+for(i in 1:dim(pairwise)[2]){
+Attractor_syn<-Get_Attractor.f(BN, Knockouts=c(pairwise[1,i], pairwise[2,i], pairwise[3,i]), asynchronous=FALSE,Percent.ON=TRUE, repetitions=l00)
+rownames<- c(rownames, paste(pairwise[1,i], pairwise[2,i], pairwise[3,i], sep="_"))
+RESsyn<- rbind(RESsyn , Attractor_syn)
+}
+row.names(RESsyn)<- rownames
+RESsyn
+
+
+#The templete code has all with the THR_[3], what if I remove the delay in activations/repressions?
+BN$Arguments["MexTmax_Pyocyanin"]<- 1
+BN$Arguments["AlgT_Umax_AmpR"]<- 1
+BN$Arguments["AmpRmax_MexT"]<- 1
+BN$Arguments["AmpRmax_AlgT_U"]<- 1
+BN$Arguments["asPrrF2max_Anthralinate"]<- 1
+#Then run the templete code again. 
+
+
+##############
+#PYOVERDINE
+##############
+
+
+#PvdS shoudl also be an initial condition
+BN$Initial_conditions<- c(BN$Initial_conditions, "PvdS")
+
+
+#What if I delayed teh action of PhoP? From 3 to 6?
+
+BN$Arguments["PhoPmax_PYOVERDINE"]<- 6
+
+KO.m <- KO_matrix.f(BN, time.steps=999, repetitions=100, asynchronous=FALSE)
+
+KO.m <- KO_matrix.f(BN, time.steps=999, repetitions=100, asynchronous=T)
+
+
+Pattern<-dynamic_evolution.f(BN,time.steps=19,asynchronous=FALSE,Knockouts="PvdS")
+Pattern
+
+AVG<-Average_simulations.f(BN,time.steps=19,repetitions=2500,Knockouts="PvdS")
+AVG
+
+
+
+
+##############
+#T1SS
+##############
+
+
+#Crc should also be an initial condition
+
+BN$Initial_conditions<- c(BN$Initial_conditions, "Crc")
+
+
+
+##############
+#T2SS
+##############
+
+#There are other nodes that should also be part of the initial conditions here:
+
+BN$Initial_conditions <- c(BN$Initial_conditions, "PA3347_phospho", "GacS_phospho", "rgRsmY", "rgRsmZ", "BfiR", "RsmA")
+
+# Run the first lines of the simple simulation checks from teh templete code.
+
+#With all the conditions on, T2SS gets on through the indirect MOD_[3] activations of Vfr and CbrA. But they are direct easy 2 out of the 3 ways 
+#So, let's remove CbrA and Vfr from the initial conditions and remove Vfr and CbrA and PhoP from the network by knocking them out (polymorphism = 0)
+
+BN$Initial_conditions <- c("Anr","MvaU","MvaT","HptB_phospho","PA3347_phospho","GacS_phospho","rgRsmY","rgRsmZ","BfiR", "RsmA")
+
+BN$Polymorphism["CbrA"]<- 0
+BN$Polymorphism["Vfr"]<- 0
+BN$Polymorphism["PhoP"]<- 0
+
+# Then run the templete code with those parameters. 
+
+
+
+##############
+#T3SS
+##############
+
+
+#Other nodes need to be added as initial conditions: RocA1_phospho, cupC, MucA, AlgT_U, PrtR, ExsD, RsmA, BfiR, rgRsmY, GacS_phospho, PA3347_phospho, Crc
+
+BN$Initial_conditions<- c(BN$Initial_conditions, "RocA1_phospho", "cupC", "MucA", "AlgT_U", "PrtR", "ExsD", "RsmA", "BfiR", "rgRsmY", "GacS_phospho", "PA3347_phospho", "Crc")
+
+
+##############
+#TFP
+##############
+
+
+#Also other nodes need to be part of the initial conditions: "MucA", "AlgT_U", "RsmA", "BfiR", "rgRsmY", "GacS_phospho", "PA3347_phospho"
+
+BN$Initial_conditions<- c(BN$Initial_conditions, "MucA", "AlgT_U", "RsmA", "BfiR", "rgRsmY", "GacS_phospho", "PA3347_phospho")
+
+
+#In both TFP is constantly on, but just because of Vfr, which gives a straight up activation. So, it was removed from the initial conditinos and KOed.
+
+BN$Initial_conditions<- BN$Initial_conditions[-4]
+BN$Polymorphism["Vfr"]<- 0
+
+#Continue runnign the templete code with those parameters.
+
+
+##############
+#ToxA
+##############
+
+
+#Other nodes should also be part of the initial conditions:
+
+BN$Initial_conditions<- c(BN$Initial_conditions, "PvdS", "RsmA", "BfiR", "rgRsmY", "GacS_phospho", "PA3347_phospho")
+
+
+#Similar to the case of TFP, we removed Vfr from the initial conditions and KOed it, together with RegA.  
+
+BN$Initial_conditions<- BN$Initial_conditions[-6]
+
+BN$Polymorphism["Vfr"]<- 0
+BN$Polymorphism["RegA"]<- 0
+
+
+#Test other activation values for Fur and HptB. 
+
+BN$Polymorphism[BN$nodes.names[1]]<- 0.5  #For Fur
+
+P_S <-dynamic_evolution.f(BN,time.steps=19, asynchronous = FALSE)
+P_S
+
+P_ON_IN1_S2<-toggplot(P_S)
+ggplot(data=P_ON_IN1_S2,aes(x=time,y=value)) +
+	geom_line( colour="#336600",size = 1.5) + ylab(" % of activation") +
+	xlab("Time steps") + facet_wrap(~variable) 
+
+
+
+AVG<-Average_simulations.f(BN,time.steps=19, repetitions=100)
+AVG
+
+P_ON_IN1_S2<-toggplot(AVG)
+ggplot(data=P_ON_IN1_S2,aes(x=time,y=value) +
+	geom_line( colour="#336600",size = 1.5) + ylab(" % of activation") +
+	xlab("Time steps") + facet_wrap(~variable) 
+
+
+
+BN$Polymorphism[BN$nodes.names[1]]<- 1 #Now for HptB
+BN$Polymorphism[BN$nodes.names[16]]<- 0.5
+
+
+P_S <-dynamic_evolution.f(BN,time.steps=19, asynchronous = FALSE)
+P_S
+
+P_ON_IN1_S2<-toggplot(P_S)
+ggplot(data=P_ON_IN1_S2,aes(x=time,y=value) +
+	geom_line( colour="#336600",size = 1.5) + ylab(" % of activation") +
+	xlab("Time steps") + facet_wrap(~variable) 
+
+
+AVG<-Average_simulations.f(BN,time.steps=19, repetitions=100)
+AVG
+
+P_ON_IN1_S2<-toggplot(AVG)
+ggplot(data=P_ON_IN1_S2,aes(x=time,y=value)) +
+	geom_line( colour="#336600",size = 1.5) + ylab(" % of activation") +
+	xlab("Time steps") + facet_wrap(~variable) 
+
+
+
+
+############################################################## Chronic virulence networks
+
+
+##############
+#Alginate
+##############
+
+#Some nodes need to be added as INs
+
+BN$Initial_conditions<- c(BN$Initial_conditions, "WspR", "MucA", "AlgT_U")
+
+
+##############
+#B-lactam resistance
+##############
+
+#Also other nodes should be part of the initial conditions:
+
+BN$Initial_conditions<- c(BN$Initial_conditions, "AlgT_U" , "MucA" , "MucP")
+
+
+##############
+#T6SS_HSI-I
+##############
+
+
+#Other nodes should also be in the initial conditions
+
+BN$Initial_conditions<- c(BN$Initial_conditions, "asPrrF2", "MucA", "AlgT_U", "T6SS_HSI_I", "QscR", "RsmA", "BfiR", "rgRsmY", "GacS_phospho", "PA3347_phospho" )
+
+
+
+##############
+#T6SS_HSI-III
+##############
+
+#Some other nodes should be added as initial conditions:
+
+BN$Initial_conditions<- c(BN$Initial_conditions, "asPrrF2", "MucA", "AlgT_U", "RsmA", "BfiR", "rgRsmY", "GacS_phospho" , "PA3347_phospho", "QscR" )
+
+
+##############
+#T6SS_HSI-II  
+##############
+
+#Same as HSI-III. Some other nodes should be added as initial conditions:
+
+BN$Initial_conditions<- c(BN$Initial_conditions, "asPrrF2", "MucA", "AlgT_U", "RsmA", "BfiR", "rgRsmY", "GacS_phospho" , "PA3347_phospho", "QscR" )
+
+
+##############
+#BIOFILM
+##############
+
+#Other nodes should also be part of the initial conditions:
+
+BN$Initial_conditions<- c(BN$Initial_conditions, "WspR", "RocA1_phospho", "cupA", "cupB", "cupC", "MucA", "AlgT_U", "BfiR", "rgRsmY", "GacS_phospho", "PA3347_phospho", "Crc", "RsmA")
+
+
+##############
+#Fluoroquinolone resistance
+##############
+
+#Also MexS should be an initial condition
+
+BN$Initial_conditions <- c(BN$Initial_conditions, "MexS")
+ 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
