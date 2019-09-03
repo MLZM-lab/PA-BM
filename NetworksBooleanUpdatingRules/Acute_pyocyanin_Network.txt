@@ -1,5 +1,5 @@
-Fur = Fur
 Pyocyanin = Anthralinate &! THR_MexT[3]
+Fur = Fur
 AmpR = THR_AlgT_U[3]
 MexS = MexT
 MexT = MexS &! THR_AmpR[3]
