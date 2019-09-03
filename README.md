@@ -8,4 +8,4 @@ We manually reconstructed the signalling and transcriptional regulatory networks
 In conclusion, our in silico-modelling framework provided us with a system-level view of the P. aeruginosa virulence and QS networks to gain new insights into the various mechanisms that support its pathogenicity and response to stressors targeting these networks. Thus, we suggest that BM provides an invaluable tool to guide the design of new treatments against P. aeruginosa.
 
 
-In this repository you will find the plain text files with the coded Boolean updating rules of our reconstructed networks, as well as the R code using the package "SPIDDOR" that was used for the Boolean analyses.
+In this repository you will find the plain text files with the coded Boolean updating rules of our reconstructed networks, as well as the R code that was used for the Boolean analyses.
