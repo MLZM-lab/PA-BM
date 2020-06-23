@@ -10,4 +10,4 @@ In conclusion, our in silico-modelling framework provided us with a system-level
 
 In this repository you will find the plain text files with the coded Boolean updating rules of our reconstructed networks, as well as the R code that was used for the Boolean analyses.
 
-You can find the publication here: https://ieeexplore.ieee.org/document/9020089
+You can find the publication of this study here: https://ieeexplore.ieee.org/document/9020089
